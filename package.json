@@ -1,0 +1,22 @@
+{
+  "name": "habits-backend",
+  "version": "1.0.0",
+  "main": "listen.js",
+  "scripts": {
+    "start": "node listen.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.8.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
