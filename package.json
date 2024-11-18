@@ -4,7 +4,8 @@
   "main": "listen.js",
   "scripts": {
     "start": "node listen.js",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "mongoose": "^8.8.1"
   },
   "devDependencies": {
+    "husky": "^9.1.6",
     "jest": "^29.7.0"
   }
 }
