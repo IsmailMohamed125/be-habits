@@ -1,5 +1,58 @@
 const { Schema, model, mongoose } = require("mongoose");
-const User = require("./user");
+
+
+const User =  require("./user")
+
+const HabitsSchema =  new Schema({
+    user_id: {
+      type:mongoose.Schema.Types.ObjectId, ref: 'User'
+    },
+    dailyHabits: [{
+      _id:{
+        type: String
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      completed: {
+        type: Boolean,
+        required: true,
+      },
+      build: {
+        type: Boolean,
+        required: true
+
+      },
+      difficulty: {
+        type: String,
+      }
+    }],
+    weeklyHabits:[{
+      _id:{
+        type: String
+      },
+      name: {
+      type: String,
+      required: true,
+    },
+    completed: {
+      type: Boolean,
+      required: true,
+    },
+    build: {
+      type: Boolean,
+      required: true
+    },
+    difficulty: {
+      type: String,
+    }
+  }]
+})
+
+const Habit = model('Habit', HabitsSchema);
+
+module.exports = Habit;
 
 exports.createHabitById = (user_id, habitData) => {
   return User.findById(user_id).then((userData) => {

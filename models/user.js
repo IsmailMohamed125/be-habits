@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const Habit = require('./habits')
 
 const UserSchema = new Schema({
   username: {
@@ -8,36 +9,19 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true
   },
-  dailyHabits: [
-    {
-      name: {
-        type: String,
-        required: true,
-      },
-      completed: {
-        type: Boolean,
-        required: true,
-      },
-      build: {
-        type: Boolean,
-      },
-      dailyComment: {
-        type: String,
-      },
-      difficulty: {
-        type: String,
-      },
-    },
-  ],
+  habits:{
+    type: Schema.Types.ObjectId,
+    ref: 'Habit'
+  },
   dailyComment: {
     type: String,
-  },
-  weeklyHabits: {
-    type: Array,
   },
 });
 
 const User = model("users", UserSchema);
 
 module.exports = User;
+
+// habits:[HabitSchema]
