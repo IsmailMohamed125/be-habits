@@ -9,9 +9,27 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  dailyHabits: {
-    type: Array,
-  },
+  dailyHabits: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      completed: {
+        type: Boolean,
+        required: true,
+      },
+      build: {
+        type: Boolean,
+      },
+      dailyComment: {
+        type: String,
+      },
+      difficulty: {
+        type: String,
+      },
+    },
+  ],
   dailyComment: {
     type: String,
   },
