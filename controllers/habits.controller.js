@@ -23,12 +23,6 @@ exports.patchHabitById = (req, res, next) => {
   const { habit_id, user_id } = req.params;
   const habitBody = req.body
   updateHabitById(habit_id, user_id, habitBody).then((updatedHabit) => {
-    if (!updatedHabit)
-      return res.status(404).json({
-        success: false,
-        message: "user creation failed",
-        error: "Unable get created user",
-      });
     res.status(201).json({
       success: true,
       updatedHabit,
@@ -41,19 +35,13 @@ exports.patchHabitById = (req, res, next) => {
 exports.getHabitByUserId = (req, res, next) => {
   const { user_id } = req.params;
   fetchHabitByUserId(user_id)
-  .then((allHabits) => {
-      if (!allHabits)
-        return res.status(404).json({
-          success: false,
-          message: "No habit found",
-          error: "Unable to fetch habits",
-        });
-      res.status(200).json({
-        success: true,
-        allHabits
+    .then((allHabits) => {
+        res.status(200).json({
+          success: true,
+          allHabits
+        })
       })
-    })
-    .catch(next)
+      .catch(next)
   }
 
 exports.deleteHabitById = (req, res, next)=>{

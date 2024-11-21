@@ -55,21 +55,31 @@ createHabitById = (user_id, habitData) => {
 
 
 updateHabitById = (habitId, user_id, habitBody) => {
+  const requiredBodyKeys = ["_id", "name", "completed", "build", "difficulty", "frequency"]
+  const habitBodyKeys = Object.keys(habitBody)
+  if(!mongoose.Types.ObjectId.isValid(user_id) || user_id.length !== 24){
+    throw new ValidationError("Bad request: incorrect user ID format")
+  }
+  if(habitBodyKeys.length !== requiredBodyKeys.length || !habitBodyKeys.every(key=>requiredBodyKeys.includes(key))){
+    throw new ValidationError("Bad request: invalid update document")
+  }
   return Habit.updateOne({user_id, "allHabits._id": habitId}, {$set: {"allHabits.$": habitBody}})
-  .then(()=>{
-      return Habit.find({user_id})
+  .then((res)=>{
+    if(res.matchedCount === 0) throw new NotFoundError("Habit not found")
+      return Habit.find({user_id}) //At the moment we don't know it's it's user or habit not found
     })
   .then(habit=>{
-      if(!habit){
-        throw new NotFoundError("Habit not found")
-      }
-      const updated = habit[0].allHabits.id(habitId)
+    const updated = habit[0].allHabits.id(habitId)
       return updated
   })
  };
 
 fetchHabitByUserId = (user_id) => {
+  if(!mongoose.Types.ObjectId.isValid(user_id) || user_id.length !== 24){
+    throw new ValidationError("Bad request: incorrect user ID format")
+  }
   return Habit.find({user_id}).then((habits) => {
+    if(habits.length === 0) throw new NotFoundError("User not found")
     return habits[0].allHabits
   })
 }
