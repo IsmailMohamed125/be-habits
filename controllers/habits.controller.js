@@ -19,9 +19,9 @@ exports.postHabit = (req, res, next) => {
 
 
 exports.patchHabitById = (req, res, next) => {
-  console.log()
   const { habit_id, user_id } = req.params;
   updateHabitById(habit_id, user_id).then((updatedHabit) => {
+    console.log(updatedHabit)
     if (!updatedHabit)
       return res.status(404).json({
         success: false,
@@ -36,10 +36,12 @@ exports.patchHabitById = (req, res, next) => {
 };
 
 exports.postHabit = (req, res, next) => {
+  const { frequency } = req.query
   const { user_id } = req.params
   const habitData = req.body
-  createHabitById(user_id, habitData).then((updatedUser) => {
-    if (!updatedUser)
+  createHabitById(user_id, habitData, frequency).then((updatedHabit) => {
+    console.log(updatedHabit, "YOOO IM JARVIS IN CONTROLLER")
+    if (!updatedHabit)
       return res.status(404).json({
         success: false,
         message: "user creation failed",
@@ -47,7 +49,7 @@ exports.postHabit = (req, res, next) => {
       });
     res.status(201).json({
       success: true,
-      updatedUser,
+      updatedHabit,
     });
   })
 };

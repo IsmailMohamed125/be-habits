@@ -35,5 +35,38 @@ describe("Testing endpoints for MVP", () => {
       expect(response.body.habits).toHaveProperty("dailyHabits")
     }))
   });
+  test("PATCH : 201 - Should return completed to be true in the specific task", () => {
+    return request(app)
+    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/daily1")
+    .expect(201)
+    .then((response => {
+      expect(response.body.updatedHabit.dailyHabits[0].completed).toBe(true)
+    }))
+  });
+  test("PATCH : 201 - Should return completed to be true in the specific task", () => {
+    return request(app)
+    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/weekly1")
+    .expect(201)
+    .then((response => {
+      expect(response.body.updatedHabit.weeklyHabits[0].completed).toBe(false)
+    }))
+  });
+  // test("POST : 201 - ", () => {
+  //   return request(app)
+  //   .post("/api/user/673dc5d257ac55c5c8cc08e4/habits?frequency=weekly")
+  //   .send({
+  //     "name": "sleep",
+  //     "completed": "false",
+  //     "build": true,
+  //     "dailyComment": "",
+  //     "difficulty": "high"
+  //   })
+  //   .expect(201)
+  //   .then((response => {
+  //     console.log(response.body.updatedHabit)
+  //     expect(response.body.updatedHabit).toHaveLength(1)
+  //     // expect(response.body.updatedHabit.weeklyHabits[0].completed).toBe(true)
+  //   }))
+  // });
 });
 

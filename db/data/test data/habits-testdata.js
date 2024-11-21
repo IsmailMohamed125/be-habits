@@ -15,7 +15,7 @@ module.exports = [
         {
           _id: "weekly1",
           name: "Go Hiking",
-          completed: false,
+          completed: true,
           build: false,
           difficulty: "medium"
         }

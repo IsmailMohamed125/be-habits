@@ -53,23 +53,32 @@ const Habit = model('Habit', HabitsSchema);
 
 
 
-createHabitById = (user_id, habitData) => {
-  return User.findById(user_id).then((userData) => {
-    userData.dailyHabits.push(habitData);
-
-    return userData.save() ;
+createHabitById = (user_id, habitData, frequency) => {
+  return Habit.find({user_id}).then((userHabits) => {
+    if (frequency === "daily"){
+    userHabits[0].dailyHabits.push(habitData);
+  }else if(frequency === "weekly"){
+    userHabits[0].weeklyHabits.push(habitData);
+  }
+  console.log(userHabits[0].weeklyHabits, "MODEL!")
+    return userHabits[0].save() ;
   }).then((response) => {
-    return response
+    return response[0]
   })
 };
 
 updateHabitById = (habitId, user_id) => {
-  console.log("eyoooooo")
-  return User.findById(user_id).then((user) => {
-    const habit = user.dailyHabits.id(habitId);
-    habit.completed = true
-    return user.save()
-  })
+  return Habit.find({user_id}).then((habits) => {
+    const habit = habits[0].dailyHabits.id(habitId)?
+    habits[0].dailyHabits.id(habitId):
+    habits[0].weeklyHabits.id(habitId);
+    if (habit.completed === false){
+    habit.set("completed", true)
+  }else{
+   habit.set("completed", false) 
+  }
+  return habits[0].save()
+})
 };
 
 fetchHabitByUserId = (user_id) => {
