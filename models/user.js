@@ -1,5 +1,7 @@
 const { Schema, model } = require("mongoose");
-const bcryptjs = require("bcryptjs");
+
+const Habit = require('./habits')
+
 
 const UserSchema = new Schema({
   username: {
@@ -8,52 +10,15 @@ const UserSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
-    required: [true, "Email is required"],
-    lowercase: true,
+    required: true,
+    unique: true
   },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: 8,
-    select: false,
+  habits:{
+    type: Schema.Types.ObjectId,
+    ref: 'Habit'
   },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Password confirmation is required"],
-    validate: {
-      validator: function (val) {
-        return val === this.password;
-      },
-      message: "Passwords need to match",
-    },
-  },
-  dailyHabits: [
-    {
-      name: {
-        type: String,
-        required: true,
-      },
-      completed: {
-        type: Boolean,
-        required: true,
-      },
-      build: {
-        type: Boolean,
-      },
-      dailyComment: {
-        type: String,
-      },
-      difficulty: {
-        type: String,
-      },
-    },
-  ],
   dailyComment: {
     type: String,
-  },
-  weeklyHabits: {
-    type: Array,
   },
 });
 
@@ -75,3 +40,5 @@ UserSchema.methods.correctPassword = async function (
 const User = model("users", UserSchema);
 
 module.exports = User;
+
+// habits:[HabitSchema]
