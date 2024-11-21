@@ -4,7 +4,6 @@ exports.postHabit = (req, res, next) => {
   const { user_id } = req.params
   const habitData = req.body
   createHabitById(user_id, habitData).then((createdHabit) => {
-    console.log(createdHabit)
     if (!createdHabit)
       return res.status(404).json({
         success: false,

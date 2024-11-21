@@ -75,7 +75,7 @@ describe("Testing endpoints for MVP", () => {
       expect(createdHabit).toMatchObject(newHabit)
     })
   });
-  test.only('DELETE : 204', ()=>{
+  test('DELETE : 204', ()=>{
     return request(app)
     .delete("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f10bcc86765d3bfacc264")
     .expect(204)

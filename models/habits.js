@@ -47,7 +47,6 @@ createHabitById = (user_id, habitData) => {
   }).then(habits=>{
     //implemetn logic to check if modifiedCount: 1 
     const {allHabits} = habits[0]
-    console.log(allHabits.slice(-1)[0])
     return allHabits.slice(-1)[0]
   })
   }
