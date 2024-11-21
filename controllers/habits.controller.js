@@ -21,7 +21,6 @@ exports.postHabit = (req, res, next) => {
 exports.patchHabitById = (req, res, next) => {
   const { habit_id, user_id } = req.params;
   updateHabitById(habit_id, user_id).then((updatedHabit) => {
-    console.log(updatedHabit)
     if (!updatedHabit)
       return res.status(404).json({
         success: false,
@@ -40,7 +39,6 @@ exports.postHabit = (req, res, next) => {
   const { user_id } = req.params
   const habitData = req.body
   createHabitById(user_id, habitData, frequency).then((updatedHabit) => {
-    console.log(updatedHabit, "YOOO IM JARVIS IN CONTROLLER")
     if (!updatedHabit)
       return res.status(404).json({
         success: false,
@@ -53,7 +51,7 @@ exports.postHabit = (req, res, next) => {
     });
   })
 };
-// const { dailyHabits, weeklyHabits } = response
+
 exports.getHabitByUserId = (req, res, next) => {
   const { user_id } = req.params;
   fetchHabitByUserId(user_id).then(({dailyHabits, weeklyHabits}) => {

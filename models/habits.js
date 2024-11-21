@@ -60,12 +60,10 @@ createHabitById = (user_id, habitData, frequency) => {
   }else if(frequency === "weekly"){
     userHabits[0].weeklyHabits.push(habitData);
   }
-  console.log(userHabits[0].weeklyHabits, "MODEL!")
     return userHabits[0].save() ;
-  }).then((response) => {
-    return response[0]
   })
-};
+  }
+
 
 updateHabitById = (habitId, user_id) => {
   return Habit.find({user_id}).then((habits) => {
