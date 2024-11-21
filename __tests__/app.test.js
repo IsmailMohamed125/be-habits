@@ -31,40 +31,58 @@ describe("Testing endpoints for MVP", () => {
     return request(app)
     .get("/api/user/673dc5d257ac55c5c8cc08e4/habits")
     .expect(200)
-    .then((response => {
-      expect(response.body.habits).toHaveProperty("dailyHabits")
+    .then((({body:{allHabits}}) => {
+      expect(allHabits).toHaveLength(2)
+      allHabits.forEach(habit=>{
+        expect(habit).toHaveProperty("_id")
+        expect(habit).toHaveProperty("name")
+        expect(habit).toHaveProperty("completed")
+        expect(habit).toHaveProperty("build")
+        expect(habit).toHaveProperty("difficulty")
+        expect(habit).toHaveProperty("frequency")
+      })
     }))
   });
   test("PATCH : 201 - Should return completed to be true in the specific task", () => {
     return request(app)
-    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/daily1")
+    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f0fb22188a3795a77a44e")
     .expect(201)
     .then((response => {
-      expect(response.body.updatedHabit.dailyHabits[0].completed).toBe(true)
+      expect(response.body.updatedHabit.completed).toBe(true)
     }))
   });
   test("PATCH : 201 - Should return completed to be true in the specific task", () => {
     return request(app)
-    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/weekly1")
+    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f10bcc86765d3bfacc264")
     .expect(201)
     .then((response => {
-      expect(response.body.updatedHabit.weeklyHabits[0].completed).toBe(false)
+      expect(response.body.updatedHabit.completed).toBe(false)
     }))
   });
   test("POST : 201 - ", () => {
-    return request(app)
-    .post("/api/user/673dc5d257ac55c5c8cc08e4/habits?frequency=weekly")
-    .send({
+    const newHabit = {
       "name": "sleep",
-      "completed": "false",
+      "completed": false,
       "build": true,
-      "dailyComment": "",
-      "difficulty": "high"
-    })
+      "difficulty": "high",
+      "frequency": "weekly"
+    }
+    return request(app)
+    .post("/api/user/673dc5d257ac55c5c8cc08e4/habits")
+    .send(newHabit)
     .expect(201)
-    .then((response => {
-      expect(response.body.updatedHabit.weeklyHabits).toHaveLength(2)
-    }))
+    .then(({body: {createdHabit}}) => {
+      expect(createdHabit).toMatchObject(newHabit)
+    })
   });
+  test.only('DELETE : 204', ()=>{
+    return request(app)
+    .delete("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f10bcc86765d3bfacc264")
+    .expect(204)
+    .then((response)=>{
+      expect(response.body).toEqual({})
+    })
+  })
+
 });
 

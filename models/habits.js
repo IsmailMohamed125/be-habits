@@ -1,4 +1,4 @@
-const { Schema, model, mongoose } = require("mongoose");
+const { Schema, model, mongoose, Types } = require("mongoose");
 const db = require("../db/connection.js");
 const User =  require("./user")
 
@@ -6,9 +6,10 @@ const HabitsSchema =  new Schema({
     user_id: {
       type:mongoose.Schema.Types.ObjectId, ref: 'User'
     },
-    dailyHabits: [{
+    allHabits: [{
       _id:{
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        default: ()=> new Types.ObjectId() 
       },
       name: {
         type: String,
@@ -25,51 +26,37 @@ const HabitsSchema =  new Schema({
       },
       difficulty: {
         type: String,
-      }
-    }],
-    weeklyHabits:[{
-      _id:{
-        type: String
+        required: true
       },
-      name: {
-      type: String,
-      required: true,
-    },
-    completed: {
-      type: Boolean,
-      required: true,
-    },
-    build: {
-      type: Boolean,
-      required: true
-    },
-    difficulty: {
-      type: String,
-    }
-  }]
+      frequency: {
+        type: String,
+        required: true,
+        default: ()=> "daily"
+      }
+    }]
 })
 
 const Habit = model('Habit', HabitsSchema);
 
 
 
-createHabitById = (user_id, habitData, frequency) => {
-  return Habit.find({user_id}).then((userHabits) => {
-    if (frequency === "daily"){
-    userHabits[0].dailyHabits.push(habitData);
-  }else if(frequency === "weekly"){
-    userHabits[0].weeklyHabits.push(habitData);
-  }
-    return userHabits[0].save() ;
+createHabitById = (user_id, habitData) => {
+  return Habit.updateOne({user_id}, {$push: {allHabits: habitData}})
+  .then(postedHabit=>{
+    return Habit.find({user_id})
+  }).then(habits=>{
+    //implemetn logic to check if modifiedCount: 1 
+    const {allHabits} = habits[0]
+    console.log(allHabits.slice(-1)[0])
+    return allHabits.slice(-1)[0]
   })
   }
 
 
+
 updateHabitById = (habitId, user_id) => {
   return Habit.find({user_id}).then((habits) => {
-    const habit = habits[0].dailyHabits.id(habitId)?
-    habits[0].dailyHabits.id(habitId):
-    habits[0].weeklyHabits.id(habitId);
+    const habit = habits[0].allHabits.id(habitId);
     if (habit.completed === false){
     habit.set("completed", true)
   }else{
@@ -77,11 +64,29 @@ updateHabitById = (habitId, user_id) => {
   }
   return habits[0].save()
 })
+.then(savedHabit=>{
+  return Habit.find({user_id})
+  .then(habit=>{
+    return habit[0].allHabits.id(habitId)
+  })
+})
 };
 
 fetchHabitByUserId = (user_id) => {
   return Habit.find({user_id}).then((habits) => {
-    return habits[0]
+    return habits[0].allHabits
   })
 }
-module.exports = { Habit, createHabitById, updateHabitById, fetchHabitByUserId }
+
+removeHabitById = (user_id, habit_id) =>{
+  return Habit.updateOne({user_id}, {$pull: {allHabits: {_id: habit_id}}})
+  .then((habits)=>{
+    if(habits.matchedCount !== 1 || habits.modifiedCount < 1){
+      Promise.reject({status: 400, message: "Bad Request"})
+    }else{
+      return habits
+    }
+  })
+
+}
+module.exports = { Habit, createHabitById, updateHabitById, fetchHabitByUserId, removeHabitById }
