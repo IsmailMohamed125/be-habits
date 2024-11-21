@@ -44,19 +44,39 @@ describe("Testing endpoints for MVP", () => {
     }))
   });
   test("PATCH : 201 - Should return completed to be true in the specific task", () => {
+    const updateCompleteStatus = {
+      _id: "673f0fb22188a3795a77a44e",
+      name: "Drink Water",
+      completed: true,
+      build: true,
+      difficulty: "easy",
+      frequency: "daily"
+    }
     return request(app)
     .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f0fb22188a3795a77a44e")
+    .send(updateCompleteStatus)
     .expect(201)
     .then((response => {
       expect(response.body.updatedHabit.completed).toBe(true)
     }))
   });
   test("PATCH : 201 - Should return completed to be true in the specific task", () => {
+    const updateCompleteStatus = {
+      _id: "673f0fb22188a3795a77a44e",
+      name: "Drink bin juice",
+      completed: false,
+      build: false,
+      difficulty: "easy",
+      frequency: "daily"
+    }
     return request(app)
-    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f10bcc86765d3bfacc264")
+    .patch("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f0fb22188a3795a77a44e")
+    .send(updateCompleteStatus)
     .expect(201)
     .then((response => {
       expect(response.body.updatedHabit.completed).toBe(false)
+      expect(response.body.updatedHabit.build).toBe(false)
+      expect(response.body.updatedHabit.name).toBe("Drink bin juice")
     }))
   });
   test("POST : 201 - ", () => {
@@ -81,6 +101,14 @@ describe("Testing endpoints for MVP", () => {
     .expect(204)
     .then((response)=>{
       expect(response.body).toEqual({})
+    })
+  })
+  test('DELETE returns 404 when passed a non-existent habit_id', ()=>{
+    return request(app)
+    .delete("/api/user/673dc5d257ac55c5c8cc08e4/habits/673f10bcc86765d3bfacc200")
+    .expect(404)
+    .then((response)=>{
+      expect(response.body.message).toBe("Habit not found")
     })
   })
 

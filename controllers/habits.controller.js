@@ -15,12 +15,14 @@ exports.postHabit = (req, res, next) => {
       createdHabit,
     });
   })
+  .catch(next)
 };
 
 
 exports.patchHabitById = (req, res, next) => {
   const { habit_id, user_id } = req.params;
-  updateHabitById(habit_id, user_id).then((updatedHabit) => {
+  const habitBody = req.body
+  updateHabitById(habit_id, user_id, habitBody).then((updatedHabit) => {
     if (!updatedHabit)
       return res.status(404).json({
         success: false,
@@ -31,13 +33,15 @@ exports.patchHabitById = (req, res, next) => {
       success: true,
       updatedHabit,
     });
-  });
+  })
+  .catch(next)
 };
 
 
 exports.getHabitByUserId = (req, res, next) => {
   const { user_id } = req.params;
-  fetchHabitByUserId(user_id).then((allHabits) => {
+  fetchHabitByUserId(user_id)
+  .then((allHabits) => {
       if (!allHabits)
         return res.status(404).json({
           success: false,
@@ -49,6 +53,7 @@ exports.getHabitByUserId = (req, res, next) => {
         allHabits
       })
     })
+    .catch(next)
   }
 
 exports.deleteHabitById = (req, res, next)=>{
@@ -58,7 +63,5 @@ exports.deleteHabitById = (req, res, next)=>{
       res.status(204).send({
       })
     })
-    .catch(err=>{
-      return err
-    })
+    .catch(next)
 }

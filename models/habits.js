@@ -1,6 +1,7 @@
 const { Schema, model, mongoose, Types } = require("mongoose");
 const db = require("../db/connection.js");
-const User =  require("./user")
+const User =  require("./user");
+const { ValidationError, NotFoundError } = require("../utils/errorClasses.js");
 
 const HabitsSchema =  new Schema({
     user_id: {
@@ -53,23 +54,19 @@ createHabitById = (user_id, habitData) => {
 
 
 
-updateHabitById = (habitId, user_id) => {
-  return Habit.find({user_id}).then((habits) => {
-    const habit = habits[0].allHabits.id(habitId);
-    if (habit.completed === false){
-    habit.set("completed", true)
-  }else{
-   habit.set("completed", false) 
-  }
-  return habits[0].save()
-})
-.then(savedHabit=>{
-  return Habit.find({user_id})
+updateHabitById = (habitId, user_id, habitBody) => {
+  return Habit.updateOne({user_id, "allHabits._id": habitId}, {$set: {"allHabits.$": habitBody}})
+  .then(()=>{
+      return Habit.find({user_id})
+    })
   .then(habit=>{
-    return habit[0].allHabits.id(habitId)
+      if(!habit){
+        throw new NotFoundError("Habit not found")
+      }
+      const updated = habit[0].allHabits.id(habitId)
+      return updated
   })
-})
-};
+ };
 
 fetchHabitByUserId = (user_id) => {
   return Habit.find({user_id}).then((habits) => {
@@ -81,7 +78,7 @@ removeHabitById = (user_id, habit_id) =>{
   return Habit.updateOne({user_id}, {$pull: {allHabits: {_id: habit_id}}})
   .then((habits)=>{
     if(habits.matchedCount !== 1 || habits.modifiedCount < 1){
-      Promise.reject({status: 400, message: "Bad Request"})
+      throw new NotFoundError("Habit not found")
     }else{
       return habits
     }
