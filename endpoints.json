@@ -1,0 +1,90 @@
+{
+  "GET /api": {
+    "description": "serves up a json representation of all the available endpoints of the api"
+  },
+  "GET /api/v1/user": {
+    "description": "serves the signed in users object",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "_id": "67431bf22ca95ada48e9f706",
+        "clerkID": "user_2pIG5dA2bwWP4GIBFpPVLZSfgSO",
+        "email": "test@test.com",
+        "habits": [
+          {
+            "_id": "67444f155812435d9461f3fe",
+            "user": "user_2pIG5dA2bwWP4GIBFpPVLZSfgSO",
+            "name": "Meal Prep",
+            "completed": false,
+            "build": true,
+            "difficulty": "hard",
+            "frequency": "weekly"
+          }
+        ]
+      }
+    }
+  },
+  "POST /api/v1/user": {
+    "description": "serves a new user object",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "clerkID": "user_2pIG5dA2bwWP4GIBFpPVLZSfgSO",
+        "email": "test@test.com",
+        "_id": "6744700488f6e91f33ac89cb"
+      }
+    }
+  },
+  "GET /api/v1/habit": {
+    "description": "serves an array of all habit objects of signed in user filtered by queries provided",
+    "queries": ["completed", "build", "difficulty", "frequency"],
+    "exampleResponse": {
+      "habits": [
+        {
+          "_id": "67444f155812435d9461f3fe",
+          "user": "user_2pIG5dA2bwWP4GIBFpPVLZSfgSO",
+          "name": "Meal Prep",
+          "completed": false,
+          "build": true,
+          "difficulty": "hard",
+          "frequency": "weekly"
+        }
+      ]
+    }
+  },
+  "POST /api/v1/habit": {
+    "description": "serves a new habit object",
+    "queries": [],
+    "exampleResponse": {
+      "habit": {
+        "user": "user_2pIG5dA2bwWP4GIBFpPVLZSfgSO",
+        "name": "test",
+        "completed": true,
+        "build": false,
+        "difficulty": "hard",
+        "frequency": "daily",
+        "_id": "6744707f199e47cc2270534b"
+      }
+    }
+  },
+  "PATCH /api/v1/habit/:habit_id": {
+    "description": "serves an updated habit based on the habit_id passed",
+    "queries": [],
+    "exampleResponse": {
+      "habit": {
+        "_id": "67444f155812435d9461f3fe",
+        "user": "user_2pIG5dA2bwWP4GIBFpPVLZSfgSO",
+        "name": "Meal Prep",
+        "completed": false,
+        "build": true,
+        "difficulty": "hard",
+        "frequency": "weekly"
+      }
+    }
+  },
+  "DELETE /api/v1/habit/:habit_id": {
+    "description": "returns no content and deletes habit by habit_id",
+    "queries": [],
+    "exampleResponse": {}
+  }
+}
