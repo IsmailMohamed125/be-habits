@@ -1,15 +1,24 @@
 const mongoose = require("mongoose");
 
-require("dotenv").config();
+let conn = null;
 
 const connectDB = async () => {
+  if (conn) return conn;
+
   try {
-    const conn = await mongoose.connect(process.env.DBCONNECTIONSTRING);
-    // console.log("connected to DB");
+    conn = await mongoose.connect(process.env.DBCONNECTIONSTRING);
+    return conn;
   } catch (error) {
-    console.error(error.message);
     process.exit(1);
-  } 
+  }
 };
 
-module.exports = connectDB;
+const disconnectDB = async () => {
+  if (conn) {
+    await mongoose.disconnect();
+    console.log("Database disconnected");
+    conn = null;
+  }
+};
+
+module.exports = { connectDB, disconnectDB };

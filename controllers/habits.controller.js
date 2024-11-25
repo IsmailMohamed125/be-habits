@@ -1,55 +1,76 @@
-const { updateHabitById, createHabitById, fetchHabitByUserId, removeHabitById } = require("../models/habits");
+const Habit = require("../models/habits");
+const { clerkClient, getAuth } = require("@clerk/express");
+const AppError = require("../utils/errorClass");
 
-exports.postHabit = (req, res, next) => {
-  const { user_id } = req.params
-  const habitData = req.body
-  createHabitById(user_id, habitData).then((createdHabit) => {
-    if (!createdHabit)
-      return res.status(404).json({
-        success: false,
-        message: "user creation failed",
-        error: "Unable get created user",
-      });
-    res.status(201).json({
-      success: true,
-      createdHabit,
+// Finished
+exports.getHabits = async (req, res, next) => {
+  try {
+    const { userId } = getAuth(req);
+    const habits = await Habit.find({ ...req.query, user: userId });
+    res.status(200).json({
+      status: "success",
+      data: {
+        habits,
+      },
     });
-  })
-  .catch(next)
-};
-
-
-exports.patchHabitById = (req, res, next) => {
-  const { habit_id, user_id } = req.params;
-  const habitBody = req.body
-  updateHabitById(habit_id, user_id, habitBody).then((updatedHabit) => {
-    res.status(201).json({
-      success: true,
-      updatedHabit,
-    });
-  })
-  .catch(next)
-};
-
-
-exports.getHabitByUserId = (req, res, next) => {
-  const { user_id } = req.params;
-  fetchHabitByUserId(user_id)
-    .then((allHabits) => {
-        res.status(200).json({
-          success: true,
-          allHabits
-        })
-      })
-      .catch(next)
+  } catch (error) {
+    next(error);
   }
+};
 
-exports.deleteHabitById = (req, res, next)=>{
-  const {user_id, habit_id} = req.params;
-  removeHabitById(user_id, habit_id)
-    .then(()=>{
-      res.status(204).send({
-      })
-    })
-    .catch(next)
-}
+//Finished
+exports.postHabit = async (req, res, next) => {
+  try {
+    const { userId } = getAuth(req);
+    const newHabit = await Habit.create({ ...req.body, user: userId });
+    res.status(201).json({
+      status: "success",
+      data: {
+        habit: newHabit,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Finished
+exports.patchHabitById = async (req, res, next) => {
+  try {
+    const habitObj = { ...req.body };
+    const excludedFields = ["_id", "user", "id", "__v"];
+    excludedFields.forEach((el) => {
+      if (habitObj[el]) throw new AppError("Invalid field", 400);
+    });
+
+    const habit = await Habit.findByIdAndUpdate(req.params.habit_id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!habit) throw new AppError("No habit found with that ID", 404);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        habit,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Finished
+exports.deleteHabitById = async (req, res, next) => {
+  try {
+    const habit = await Habit.findByIdAndDelete(req.params.habit_id);
+    if (!habit) throw new AppError("No habit found with that ID", 404);
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

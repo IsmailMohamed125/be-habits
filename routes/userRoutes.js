@@ -1,12 +1,10 @@
 const express = require("express");
 
-const { createUser } = require("../controllers/user.controller");
-const { patchHabitById, postHabit, getHabitByUserId, deleteHabitById } = require("../controllers/habits.controller");
+const { requireAuth } = require("@clerk/express");
+const { getUser, createUser } = require("../controllers/user.controller");
 
 const router = express.Router();
 
-router.route("/:user_id/habits/:habit_id").patch(patchHabitById).delete(deleteHabitById)
-
-router.route("/:user_id/habits").post(postHabit).get(getHabitByUserId)
+router.route("/").get(requireAuth(), getUser).post(requireAuth(), createUser);
 
 module.exports = router;

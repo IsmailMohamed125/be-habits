@@ -1,22 +1,23 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
+const { clerkMiddleware } = require("@clerk/express");
+const apiRouter = require("./routes/apiRoutes");
+const AppError = require("./utils/errorClass");
+const errorHandler = require("./controllers/error.controller");
+const { connectDB } = require("./db/connection");
 
 const app = express();
-const connectDB = require("./db/connection");
-const apiRouter = require("./routes/apiRoutes");
-const errorHandler = require("./controllers/error.controller");
-const { NotFoundError } = require("./utils/errorClasses");
-connectDB();
 
 app.use(cors());
+app.use(clerkMiddleware());
 app.use(express.json());
-app.use(cookieParser());
 
-app.use("/api", apiRouter);
+connectDB();
+app.use("/api/v1", apiRouter);
 
 app.all("/*", (req, res, next) => {
-  next(new NotFoundError("Route not Found"));
+  next(new AppError("Route not Found", 404));
 });
 
 app.use(errorHandler);
