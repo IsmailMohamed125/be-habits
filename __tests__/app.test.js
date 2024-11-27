@@ -289,3 +289,72 @@ describe("MVP ENDPOINTS", () => {
     });
   });
 });
+
+describe("EXTRA ENDPOINTS", () => {
+  describe.only("Journals endpoints", () => {
+    describe("GET:/api/v1/journal", () => {
+      test("GET:200 - Responds with an array containing correctly formated journal objects", async () => {
+        const {
+          body: {
+            data: { journalEntries },
+          },
+        } = await request(app)
+          .get("/api/v1/journal")
+          .auth(userToken, { type: "bearer" })
+          .expect(200);
+        expect(journalEntries.length).not.toBe(0);
+        journalEntries.forEach((journalEntry) => {
+          expect(journalEntry).toMatchObject({
+            _id: expect.any(String),
+            user: expect.any(String),
+            title: expect.any(String),
+            __v: expect.any(Number),
+            id: expect.any(String),
+          });
+        });
+      });
+    });
+    describe("POST:/api/v1/journal", () => {
+      test("POST:201 - Responds with a correctly formated habit object", async () => {
+        const {
+          body: {
+            data: { journalEntry },
+          },
+        } = await request(app)
+          .post("/api/v1/journal")
+          .send({
+            title: "test",
+            entry: "testing",
+          })
+          .auth(userToken, { type: "bearer" })
+          .expect(201);
+        expect(journalEntry).toMatchObject({
+          _id: expect.any(String),
+          title: expect.any(String),
+          entry: expect.any(String),
+          created_at: expect.any(String),
+        });
+      });
+    });
+    describe("GET:/api/v1/journal/:journal_id", () => {
+      test("GET:200 - Responds with an array containing correctly formated the requested journal object", async () => {
+        const {
+          body: {
+            data: { journalEntry },
+          },
+        } = await request(app)
+          .get("/api/v1/journal/674756fb13e5f1987e210851")
+          .auth(userToken, { type: "bearer" })
+          .expect(200);
+        expect(journalEntry).toBeInstanceOf(Object);
+        expect(journalEntry).toMatchObject({
+          _id: expect.any(String),
+          user: expect.any(String),
+          title: expect.any(String),
+          __v: expect.any(Number),
+          id: expect.any(String),
+        });
+      });
+    });
+  });
+});

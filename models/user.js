@@ -2,6 +2,8 @@ const { Schema, model } = require("mongoose");
 
 const Habit = require("./habits");
 
+const Journal = require("./journal")
+
 const UserSchema = new Schema(
   {
     clerkID: {
@@ -26,6 +28,12 @@ const UserSchema = new Schema(
 
 UserSchema.virtual("habits", {
   ref: "Habit",
+  foreignField: "user",
+  localField: "clerkID",
+});
+
+UserSchema.virtual("journalEntries", {
+  ref: "Journal",
   foreignField: "user",
   localField: "clerkID",
 });
