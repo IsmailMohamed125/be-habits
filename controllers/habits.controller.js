@@ -74,3 +74,20 @@ exports.deleteHabitById = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.midnightReset = async (req,res,next)=>{
+  const { userId } = getAuth(req);
+  const resetHabitBody = {
+    completed: false
+  }
+  try {
+    const reset = await Habit.updateMany({user: userId}, { $set: resetHabitBody});
+    res.status(200).json({
+      status: "success",
+      data: reset
+    })
+  }
+  catch(error){
+    next(error)
+  }
+}

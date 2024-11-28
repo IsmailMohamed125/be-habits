@@ -291,7 +291,7 @@ describe("MVP ENDPOINTS", () => {
 });
 
 describe("EXTRA ENDPOINTS", () => {
-  describe.only("Journals endpoints", () => {
+  describe("Journals endpoints", () => {
     describe("GET:/api/v1/journal", () => {
       test("GET:200 - Responds with an array containing correctly formated journal objects", async () => {
         const {
@@ -356,5 +356,15 @@ describe("EXTRA ENDPOINTS", () => {
         });
       });
     });
+    describe("PATCH: 200 /api/v1/habit", ()=>{
+      test("PATCH 200 - Respond with an arrray containing correctly resetted habits", async ()=>{
+        const {body:{data}} = await request(app)
+        .patch("/api/v1/habit")
+        .auth(userToken, { type: "bearer" })
+        .expect(200);
+        expect(data.acknowledged).toBe(true)
+      });
+    });
   });
+  
 });

@@ -6,11 +6,12 @@ const {
   postHabit,
   patchHabitById,
   deleteHabitById,
+  midnightReset,
 } = require("../controllers/habits.controller");
 
 const router = express.Router();
 
-router.route("/").get(requireAuth(), getHabits).post(requireAuth(), postHabit);
+router.route("/").get(requireAuth(), getHabits).post(requireAuth(), postHabit).patch(requireAuth(), midnightReset);
 
 router
   .route("/:habit_id")
